@@ -127,6 +127,10 @@ class sfDynamicsManager
     }
   }
 
+  /**
+   * Deprecated method
+   * You should use generateCssHtml() and generateJsHtml() instead
+   */
   public function generateAssetsHtml()
   {
     $renderer = sfDynamics::getRenderer();
@@ -161,14 +165,77 @@ class sfDynamicsManager
     return $html;
   }
 
+
+  /**
+   * Generate the sfDynamics html tags for a given asset type
+   */
+  protected function generateHtml($type, $ext)
+  {
+    if (!isset($this->{$type.'s'}))
+    {
+      throw new sfDynamicsException('The '.$type.' asset type is unknown');
+    }
+    $renderer = sfDynamics::getRenderer();
+    $html = '';
+
+    /* generate useable package array */
+    $packages = array();
+    foreach(array_keys($this->packages) as $packageName)
+    {
+      $packages[$packageName] = $this->getPackage($packageName);
+    }
+
+    $assets = $this->{$type.'s'};
+
+    if (frDynamicsConfig::isGroupingEnabledFor($type) && frDynamicsConfig::isSupercacheEnabled())
+    {
+      $url = sfDynamicsRouting::supercache_for($packages, $ext);
+      $renderer->generateSupercache($url, $packages, $assets, $type);
+      $html .= '  '.$this->getTag($url, $type)."\n";
+    }
+    else
+    {
+      foreach ($assets as $asset)
+      {
+        $url = $this->controller->genUrl(sfDynamicsRouting::uri_for($asset, $ext));
+        $html .= '  '.$this->getTag($url, $type)."\n";
+      }
+    }
+
+    return $html;
+  }
+
+
+  /**
+   * Generate the sfDynamics html tags for stylesheets
+   */
+  public function generateCssHtml()
+  {
+    return $this->generateHtml('stylesheet', 'css');
+  }
+
+
+  /**
+   * Generate the sfDynamics html tags for javascript files
+   */
+  public function generateJsHtml()
+  {
+    return $this->generateHtml('javascript', 'js');
+  }
+
+
   public function getTag($url, $type)
   {
     switch ($type)
     {
       case 'javascript':
-        return '<script type="text/javascript" src="'.$url.'"></script>';
+        return sprintf('<script type="text/javascript" src="%s"></script>', $url);
       case 'stylesheet':
-        return '<link rel="stylesheet" type="text/css" media="all" href="'.$url.'" />';
+        return sprintf(
+          '<link rel="stylesheet" type="text/css" media="all" href="%s" %s>',
+          $url,
+          sfWidget::isXhtml() ? '/' : ''
+        );
       default:
         throw new BadMethodCallException('Invalid asset type.');
     }
@@ -176,20 +243,64 @@ class sfDynamicsManager
 
   public function filterContent(sfEvent $event, $content)
   {
-    $prepend  = sfDynamicsConfig::getAssetsPositionInHead() == 'prepend';
-    $response = $event->getSubject();
-    $pos      = $prepend ? strpos($content, '<head>')+6 : strpos($content, '</head>');
+    $content = $this->addSfDynamicsTags($content, 'css');
+    $content = $this->addSfDynamicsTags($content, 'js');
 
-    if (false !== $pos)
+    return $content;
+  }
+
+
+  /**
+   * Add sfDynamics css and js tags to the content
+   */
+  protected function addSfDynamicsTags($content, $ext)
+  {
+    if (!in_array($ext, array('css', 'js')))
     {
-      $html = $this->generateAssetsHtml();
+      throw new sfDynamicsException('"'.$type.'" is an unknown file extension');
+    }
 
-      if ($html)
+    $method = 'generate'.ucfirst($ext).'Html';
+    $html = $this->$method();
+    if (!$html)
+    {
+      return $content;
+    }
+
+    if ('prepend' === call_user_func(array('sfDynamicsConfig', 'get'.ucfirst($ext).'Position')))
+    {
+      // Tags should be added in the top of the placeholder
+      $placeholder = call_user_func(array('sfDynamicsConfig', 'get'.ucfirst($ext).'TopPlaceholder'));
+      $pos         = stripos($content, $placeholder);
+      // If not found, <head> is used instead
+      if (false === $pos)
       {
-        $content = substr($content, 0, $pos)."\n".$html.substr($content, $pos);
+        $placeholder = '<head>';
+        $pos         = stripos($content, $placeholder);
+        if (false === $pos)
+        {
+          return $content;
+        }
+      }
+      $pos += strlen($placeholder);
+    }
+    else
+    {
+      // Tags should be added in the bottom of the placeholder
+      $placeholder = call_user_func(array('sfDynamicsConfig', 'get'.ucfirst($ext).'BottomPlaceholder'));
+      $pos         = stripos($content, $placeholder);
+      // If not found, </head> is used instead
+      if (false === $pos)
+      {
+        $placeholder = '</head>';
+        $pos         = stripos($content, $placeholder);
+        if (false === $pos)
+        {
+          return $content;
+        }
       }
     }
 
-    return $content;
+    return substr($content, 0, $pos)."\n".$html.substr($content, $pos);
   }
 }

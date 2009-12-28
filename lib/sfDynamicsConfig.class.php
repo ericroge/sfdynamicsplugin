@@ -97,6 +97,10 @@ class sfDynamicsConfig
     return sfConfig::get('app_sfDynamicsPlugin_supercache_web_path', 'dynamics');
   }
 
+
+  /**
+   * Returns assets position in head
+   */
   static public function getAssetsPositionInHead()
   {
     $position = sfConfig::get('app_sfDynamicsPlugin_assets_position_in_head', 'append');
@@ -104,6 +108,74 @@ class sfDynamicsConfig
     if (!in_array($position, array('append', 'prepend')))
     {
       throw new sfDynamicsConfigurationException('Invalid assets position in head.');
+    }
+
+    return $position;
+  }
+
+
+  /**
+   * Returns the css top placeholder
+   */
+  static public function getCssTopPlaceholder()
+  {
+    return sfConfig::get('app_sfDynamicsPlugin_css_top_placeholder', '<!-- css placeholder BEGIN -->');
+  }
+
+
+  /**
+   * Returns the css bottom placeholder
+   */
+  static public function getCssBottomPlaceholder()
+  {
+    return sfConfig::get('app_sfDynamicsPlugin_css_bottom_placeholder', '<!-- css placeholder END -->');
+  }
+
+
+  /**
+   * Returns the css assets position in dedicated placeholder
+   */
+  static public function getCssPosition()
+  {
+    $position = sfConfig::get('app_sfDynamicsPlugin_css_position', sfDynamicsConfig::getAssetsPositionInHead());
+
+    if (!in_array($position, array('append', 'prepend')))
+    {
+      throw new sfDynamicsConfigurationException('Invalid css position');
+    }
+
+    return $position;
+  }
+
+
+  /**
+   * Returns the js top placeholder
+   */
+  static public function getJsTopPlaceholder()
+  {
+    return sfConfig::get('app_sfDynamicsPlugin_js_top_placeholder', '<!-- js placeholder BEGIN -->');
+  }
+
+
+  /**
+   * Returns the js bottom placeholder
+   */
+  static public function getJsBottomPlaceholder()
+  {
+    return sfConfig::get('app_sfDynamicsPlugin_js_bottom_placeholder', '<!-- js placeholder END -->');
+  }
+
+
+  /**
+   * Returns the css assets position in dedicated placeholder
+   */
+  static public function getJsPosition()
+  {
+    $position = sfConfig::get('app_sfDynamicsPlugin_js_position', sfDynamicsConfig::getAssetsPositionInHead());
+
+    if (!in_array($position, array('append', 'prepend')))
+    {
+      throw new sfDynamicsConfigurationException('Invalid js position');
     }
 
     return $position;
