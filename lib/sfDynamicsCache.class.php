@@ -77,7 +77,7 @@ class sfDynamicsCache extends sfFileCache
 
       if (is_dir($cacheDir = self::getSuperCacheDir(true)))
       {
-        $event->getSubject()->getFilesystem()->remove(sfFinder::type('file')->ignore_version_control()->discard('.sf')->in($cacheDir));
+        $event->getSubject()->getFilesystem()->remove(sfFinder::type('file')->ignore_version_control()->discard(array('.sf', '.htaccess'))->in($cacheDir));
       }
 
       $done = true;
