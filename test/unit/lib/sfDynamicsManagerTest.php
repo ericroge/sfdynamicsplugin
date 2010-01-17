@@ -15,7 +15,7 @@ class ManagerMock extends sfDynamicsManager
   }
 }
 
-$t = new lime_test(3, new lime_output_color());
+$t = new lime_test(7, new lime_output_color());
 
 
 if (!sfContext::hasInstance())
@@ -147,4 +147,21 @@ END;
     $waited,
     '->addSfDynamicsTags() inserts tags at the beginning of <head> if position "prepend" and placeholder not found'
   );
+}
+
+
+$t->comment('->getTag()');
+$manager = sfDynamics::getManager();
+sfWidget::setXhtml(false);
+$t->is($manager->getTag('foo.js', 'javascript'), '<script type="text/javascript" src="foo.js"></script>', '->getTag() returns a "<script>" tag for the js type');
+$t->is($manager->getTag('foo.css', 'stylesheet'), '<link rel="stylesheet" type="text/css" media="all" href="foo.css" >', '->getTag() returns a "<style media="screen">" tag for the css type');
+sfWidget::setXhtml(true);
+$t->is($manager->getTag('foo.css', 'stylesheet'), '<link rel="stylesheet" type="text/css" media="all" href="foo.css" />', '->getTag() uses the sfWidget::getXhtml() config');
+try {
+  $manager->getTag('foo.swf', 'swf');
+  $t->fail('->getTag() throws an exception if type isn’t stylesheet or javascript');
+}
+catch (Exception $e)
+{
+  $t->pass('->getTag() throws an exception if type isn’t stylesheet or javascript');
 }
