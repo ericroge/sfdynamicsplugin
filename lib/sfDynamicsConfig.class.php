@@ -119,7 +119,7 @@ class sfDynamicsConfig
    */
   static public function getCssPlaceholder()
   {
-    return sfConfig::get('app_sfDynamicsPlugin_bottom_placeholder', '<!-- Include sfDynamics css tags -->');
+    return sfConfig::get('app_sfDynamicsPlugin_css_placeholder', '<!-- Include sfDynamics css tags -->');
   }
 
 
