@@ -150,39 +150,6 @@ END;
 }
 
 
-
-$t->comment('->generateAssetsHtml()');
-sfConfig::set('app_sfDynamicsPlugin_manager', 'ManagerMock');
-$manager = sfDynamics::getManager();
-$content = <<<END
-<!-- Include sfDynamics css tags -->
-<!-- Include sfDynamics js tags -->
-END;
-$waited = <<<END
-<link rel="stylesheet" type="text/css" media="screen" href="/dynamics/foo.css" />
-<script type="text/javascript" src="/dynamics/foo.js"></script>
-END;
-$t->is(
-  $manager->filterContent(new sfEvent('lorem', 'event.name'), $content),
-  $waited,
-  '->generateAssetsHtml() returns relative paths when no Cdn'
-);
-sfConfig::set('app_sfDynamicsPlugin_css_cdn_host', 'http://css.example.com');
-sfConfig::set('app_sfDynamicsPlugin_js_cdn_host',  'http://js.example.com');
-$t->comment(sfDynamicsConfig::getJsCdn());
-$waited = <<<END
-<link rel="stylesheet" type="text/css" media="screen" href="http://css.example.com/dynamics/foo.css" />
-<script type="text/javascript" src="http://js.example.com/dynamics/foo.js"></script>
-END;
-$t->is(
-  $manager->filterContent(new sfEvent('lorem', 'event.name'), $content),
-  $waited,
-  '->generateAssetsHtml() returns relative paths when no Cdn'
-);
-
-
-
-
 $t->comment('->getTag()');
 $manager = sfDynamics::getManager();
 sfWidget::setXhtml(false);
