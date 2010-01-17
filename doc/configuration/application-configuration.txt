@@ -25,24 +25,56 @@ must be a directory and must be web server writable (the plugin will attempt to
 create it and chmod it, but this is a bit bogus and may be removed in a future
 release).
 
-## Assets position in head
 
-This directive let you choose if the assets must be loaded at the beginning or
-at the end of the <head> tag.
+## Assets inclusion (0.9.?)
+
+You can customize where css and js sfDynamics assets will be inserted in your page
+thanks to the dedicated placeholders that you should insert in your layout:
+
+*   `<!-- Include sfDynamics css tags -->`
+*   `<!-- Include sfDynamics js tags -->`
+
+### Example
+
+    [html]
+    <html>
+      <head>
+        <title>Welcome on my website</title>
+        <?php include_http_metas() ?>
+        <?php include_metas() ?>
+        <!-- Include sfDynamics css tags -->
+        <?php include_stylesheets() ?>
+      </head>
+      <body>
+        ...
+
+        <!-- Include sfDynamics js tags -->
+        <?php include_javascripts() ?>
+      </body>
+    <html>
+
+
+**Advice:** Moving your js calls in the bottom on the body improves the [page rendering speed](http://developer.yahoo.com/performance/rules.html#js_bottom).
+
+
+If these placeholders aren’t found, assets will be inserted in the end of the `<head>` section.
+
+
+### Deprecated since 0.9.?
+
+Before the introduction of this placeholder inclusion system, a option let you choose
+if the assets must be loaded at the beginning or at the end of the `<head>` tag.
 
 Possible values: append, prepend
 
 Default value: append
-
-### Example
 
     [yaml]
     all:
       sfDynamicsPlugin:
         assets_position_in_head: prepend
 
-The <script> and <link> tags for assets inclusion will be included just after
-the <head> tag, instead of just before the </head> tag.
+**This option is now deprecated in favor of the placeholder system.**
 
 ## Concatenated javascript and stylesheet filter chains (since 0.9.5)
 

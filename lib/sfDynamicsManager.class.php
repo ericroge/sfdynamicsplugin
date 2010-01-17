@@ -257,50 +257,31 @@ class sfDynamicsManager
   {
     if (!in_array($ext, array('css', 'js')))
     {
-      throw new sfDynamicsException('"'.$type.'" is an unknown file extension');
+      throw new sfDynamicsException(sprintf('"%s" is an unknown file extension', $type));
     }
 
-    $method = 'generate'.ucfirst($ext).'Html';
-    $html = $this->$method();
-    if (!$html)
+    // Retrieve placeholders dedicated to this extension
+    $placeholder = call_user_func(array('sfDynamicsConfig', 'get'.ucfirst($ext).'Placeholder'));
+
+    // Retrieve the tags to insert
+    if (!$sfDynamicTags = $this->{'generate'.ucfirst($ext).'Html'}())
     {
-      return $content;
+      // Nothing to add, same content whithout placeholder
+      return str_ireplace($placeholder, '', $content);
     }
 
-    if ('prepend' === call_user_func(array('sfDynamicsConfig', 'get'.ucfirst($ext).'Position')))
+    if (false !== stripos($content, $placeholder))
     {
-      // Tags should be added in the top of the placeholder
-      $placeholder = call_user_func(array('sfDynamicsConfig', 'get'.ucfirst($ext).'TopPlaceholder'));
-      $pos         = stripos($content, $placeholder);
-      // If not found, <head> is used instead
-      if (false === $pos)
-      {
-        $placeholder = '<head>';
-        $pos         = stripos($content, $placeholder);
-        if (false === $pos)
-        {
-          return $content;
-        }
-      }
-      $pos += strlen($placeholder);
-    }
-    else
-    {
-      // Tags should be added in the bottom of the placeholder
-      $placeholder = call_user_func(array('sfDynamicsConfig', 'get'.ucfirst($ext).'BottomPlaceholder'));
-      $pos         = stripos($content, $placeholder);
-      // If not found, </head> is used instead
-      if (false === $pos)
-      {
-        $placeholder = '</head>';
-        $pos         = stripos($content, $placeholder);
-        if (false === $pos)
-        {
-          return $content;
-        }
-      }
+      return str_ireplace($placeholder, $sfDynamicTags, $content);
     }
 
-    return substr($content, 0, $pos)."\n".$html.substr($content, $pos);
+
+    // Placeholder not found, insertion in the <head> section
+    if ('prepend' === sfDynamicsConfig::getAssetsPositionInHead())
+    {
+      return str_ireplace('<head>', '<head>'."\n".$sfDynamicTags, $content);
+    }
+
+    return str_ireplace('</head>', $sfDynamicTags."\n".'</head>', $content);
   }
 }

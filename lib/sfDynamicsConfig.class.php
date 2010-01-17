@@ -115,71 +115,22 @@ class sfDynamicsConfig
 
 
   /**
-   * Returns the css top placeholder
-   */
-  static public function getCssTopPlaceholder()
-  {
-    return sfConfig::get('app_sfDynamicsPlugin_css_top_placeholder', '<!-- css placeholder BEGIN -->');
-  }
-
-
-  /**
    * Returns the css bottom placeholder
    */
-  static public function getCssBottomPlaceholder()
+  static public function getCssPlaceholder()
   {
-    return sfConfig::get('app_sfDynamicsPlugin_css_bottom_placeholder', '<!-- css placeholder END -->');
-  }
-
-
-  /**
-   * Returns the css assets position in dedicated placeholder
-   */
-  static public function getCssPosition()
-  {
-    $position = sfConfig::get('app_sfDynamicsPlugin_css_position', sfDynamicsConfig::getAssetsPositionInHead());
-
-    if (!in_array($position, array('append', 'prepend')))
-    {
-      throw new sfDynamicsConfigurationException('Invalid css position');
-    }
-
-    return $position;
+    return sfConfig::get('app_sfDynamicsPlugin_bottom_placeholder', '<!-- Include sfDynamics css tags -->');
   }
 
 
   /**
    * Returns the js top placeholder
    */
-  static public function getJsTopPlaceholder()
+  static public function getJsPlaceholder()
   {
-    return sfConfig::get('app_sfDynamicsPlugin_js_top_placeholder', '<!-- js placeholder BEGIN -->');
+    return sfConfig::get('app_sfDynamicsPlugin_js_placeholder', '<!-- Include sfDynamics js tags -->');
   }
 
-
-  /**
-   * Returns the js bottom placeholder
-   */
-  static public function getJsBottomPlaceholder()
-  {
-    return sfConfig::get('app_sfDynamicsPlugin_js_bottom_placeholder', '<!-- js placeholder END -->');
-  }
-
-
-  /**
-   * Returns the css assets position in dedicated placeholder
-   */
-  static public function getJsPosition()
-  {
-    $position = sfConfig::get('app_sfDynamicsPlugin_js_position', sfDynamicsConfig::getAssetsPositionInHead());
-
-    if (!in_array($position, array('append', 'prepend')))
-    {
-      throw new sfDynamicsConfigurationException('Invalid js position');
-    }
-
-    return $position;
-  }
 
   static public function getConcatenatedAssetFilterChainFor($type)
   {
