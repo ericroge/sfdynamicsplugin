@@ -76,6 +76,25 @@ Default value: append
 
 **This option is now deprecated in favor of the placeholder system.**
 
+
+## Turn on parallel downloads thanks to a basic CDN
+
+A Content Delivery Network or CDN is nothing more than an alternative host for your website
+specialized for the content delivery. Even if your content isn’t deployed across multiple,
+geographically dispersed servers, setting up a local CDN system will fix the issue on parrallel
+download that slow down the rendering in browsers. [Read more](http://www.stevesouders.com/blog/2009/05/12/sharding-dominant-domains/).
+
+
+    [yaml]
+    all:
+      sfDynamicsPlugin:
+        app_sfDynamicsPlugin_css_cdn_host: http://css.my-project.com
+        app_sfDynamicsPlugin_css_cdn_host: http://js.my-project.com
+
+
+Don’t forget to set up these subdomains in your httpd.conf.
+
+
 ## Concatenated javascript and stylesheet filter chains (since 0.9.5)
 
 Those directives (`concatenated_javascript_filter_chain` and `concatenated_stylesheet_filter_chain`)

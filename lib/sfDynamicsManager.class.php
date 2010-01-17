@@ -151,6 +151,7 @@ class sfDynamicsManager
       {
         $url = sfDynamicsRouting::supercache_for($packages, $ext);
         $renderer->generateSupercache($url, $packages, $assets, $type);
+        $url = call_user_func(array('sfDynamicsConfig', 'get'.ucfirst($ext).'Cdn')).$url;
         $html .= '  '.$this->getTag($url, $type)."\n";
       }
       else
@@ -158,6 +159,7 @@ class sfDynamicsManager
         foreach ($assets as $asset)
         {
           $url = $this->controller->genUrl(sfDynamicsRouting::uri_for($asset, $ext));
+          $url = call_user_func(array('sfDynamicsConfig', 'get'.ucfirst($ext).'Cdn')).$url;
           $html .= '  '.$this->getTag($url, $type)."\n";
         }
       }
@@ -191,6 +193,7 @@ class sfDynamicsManager
     {
       $url = sfDynamicsRouting::supercache_for($packages, $ext);
       $renderer->generateSupercache($url, $packages, $assets, $type);
+      $url = call_user_func(array('sfDynamicsConfig', 'get'.ucfirst($ext).'Cdn')).$url;
       $html .= '  '.$this->getTag($url, $type)."\n";
     }
     else
@@ -198,6 +201,7 @@ class sfDynamicsManager
       foreach ($assets as $asset)
       {
         $url = $this->controller->genUrl(sfDynamicsRouting::uri_for($asset, $ext));
+        $url = call_user_func(array('sfDynamicsConfig', 'get'.ucfirst($ext).'Cdn')).$url;
         $html .= '  '.$this->getTag($url, $type)."\n";
       }
     }

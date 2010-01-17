@@ -124,6 +124,24 @@ class sfDynamicsConfig
 
 
   /**
+   * Returns the css CDN host
+   */
+  static public function getCssCdn()
+  {
+    return sfConfig::get('app_sfDynamicsPlugin_css_cdn_host');
+  }
+
+
+  /**
+   * Returns the js CDN host
+   */
+  static public function getJsCdn()
+  {
+    return sfConfig::get('app_sfDynamicsPlugin_js_cdn_host');
+  }
+
+
+  /**
    * Returns the js top placeholder
    */
   static public function getJsPlaceholder()
