@@ -187,7 +187,7 @@ class sfDynamicsManager
 
     $assets = $this->{$type.'s'};
 
-    if (frDynamicsConfig::isGroupingEnabledFor($type) && frDynamicsConfig::isSupercacheEnabled())
+    if (sfDynamicsConfig::isGroupingEnabledFor($type) && sfDynamicsConfig::isSupercacheEnabled())
     {
       $url = sfDynamicsRouting::supercache_for($packages, $ext);
       $renderer->generateSupercache($url, $packages, $assets, $type);
